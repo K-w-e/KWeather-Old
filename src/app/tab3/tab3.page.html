@@ -1,9 +1,57 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Tab Three
+      Meteo Manuale
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content></ion-content>
+<ion-content padding>
+  <ion-item>
+    <ion-label position="floating">Inserire città qui</ion-label>
+    <ion-input type="text" [(ngModel)]="city"> </ion-input>
+  </ion-item>
+<br><br>
+<ion-button (click)="searchCity()">Cerca</ion-button>
+<br><br><br>
+  <div style="position:relative; bottom:15px">
+    Attualmente ti trovi qui: {{place}}!<br>
+    Meteo: {{temperature}},{{type}}<br>
+    Umidità: {{humidity}}%<br>
+    <img src={{icon}} style="width: 100px;"/>
+  </div>
+
+  <ion-button (click)="saveCity()">Salva città</ion-button>
+
+
+  <p>Lista città salvate:<br></p>
+  <ion-grid>
+    <ion-row> 
+      <ion-col size="3">
+        <div *ngFor="let item of cities" id="{{item}}" (click)="clickedCity()">
+          {{item}}: 
+        </div>
+      </ion-col>
+      <ion-col size="3">
+        <div *ngFor="let t of testing" class="temp">
+          {{t}}
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+
+  <ion-card (click)="selectedCity()" style="visibility: hidden;">
+    <ion-card-header>
+      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+      <ion-card-title>Card Title</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum inventore est minus porro laboriosam laborum ab nostrum repellat accusantium esse et, quaerat eaque quas veritatis commodi, veniam in aspernatur delectus.
+    </ion-card-content>
+  </ion-card>
+
+
+</ion-content>
