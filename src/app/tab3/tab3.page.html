@@ -33,7 +33,7 @@
         </div>
       </ion-col>
       <ion-col size="3">
-        <div *ngFor="let t of testing" class="temp">
+        <div *ngFor="let t of temperatureTEST" class="temp">
           {{t}}
         </div>
       </ion-col>
@@ -42,7 +42,7 @@
 
 
 
-  <ion-card (click)="selectedCity()" style="visibility: hidden;">
+ <!-- <ion-card (click)="selectedCity()" style="visibility: hidden;">
     <ion-card-header>
       <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
       <ion-card-title>Card Title</ion-card-title>
@@ -51,7 +51,11 @@
     <ion-card-content>
         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum inventore est minus porro laboriosam laborum ab nostrum repellat accusantium esse et, quaerat eaque quas veritatis commodi, veniam in aspernatur delectus.
     </ion-card-content>
-  </ion-card>
+  </ion-card>-->
 
+  <ion-button (click)="Set()">Set</ion-button>
+  <ion-button (click)="Get()">Get</ion-button>
+  <ion-button (click)="GetWeatherFromDB()">getTemp</ion-button>
+  <ion-button (click)="cancella()">Clear</ion-button>
 
 </ion-content>

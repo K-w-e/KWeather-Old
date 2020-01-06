@@ -21,11 +21,17 @@ export class Tab2Page {
   desF:string="";
   iconF:string="";
 
-  week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   typeW = [];
   temperatureW = [];
   desW = [];
   iconW = [];
+  dayW = [];
+
+  today = new Date();
+  temperatureT = [];
+  desT = [];
+  iconT = [];
+  typeT = [];
 
   constructor(public httpClient:HttpClient, public geolocation:Geolocation, public platform:Platform){
     this.platform.ready().then(()=>{
@@ -40,6 +46,7 @@ export class Tab2Page {
       this.GetCurrentTemperature(latitude, longitude);
       this.GetTemperatureForecast(latitude, longitude);
       this.GetTemperatureNextWeek(latitude, longitude);
+      this.GetTemperatureToday(latitude, longitude);
     })
   }
 
@@ -53,9 +60,40 @@ export class Tab2Page {
       this.des = obj.weather[0].description;
       this.temperature = ((parseFloat(obj.main.temp)-273.15).toFixed(2)).toString()+"°C";
       this.humidity = obj.main.humidity;
+      console.log(this.icon);
+      if(this.icon=="http://openweathermap.org/img/w/01d.png")
+        document.getElementById("today").classList.add('sun');
+      else if(this.icon=="http://openweathermap.org/img/w/04d.png") 
+        document.getElementById("today").classList.add('cloud');
+    })
+    
+  }
+
+  GetTemperatureToday(latitude, longitude){
+    var date = this.today.getFullYear()+'-'+this.UtilDate((this.today.getMonth()+1))+'-'+this.UtilDate(this.today.getDate());
+
+    var url = "https://api.openweathermap.org/data/2.5/forecast?lat="+latitude+"&lon="+longitude+"&appid=124e8fe73f164ffb8af4ed5817deb342";
+    this.httpClient.get(url).subscribe((temperaturedataW)=>{
+      var obj = <any>temperaturedataW;
+      for(let x in obj.list){
+        if(obj.list[x].dt_txt.includes(date)){
+          this.temperatureT[x] = ((parseFloat(obj.list[x].main.temp)-273.15).toFixed(2)).toString()+"°C";
+          this.typeT[x] = obj.list[x].weather[0].main;
+          this.desT[x] = obj.list[x].weather[0].description;
+          this.iconT[x] = "http://openweathermap.org/img/w/"+obj.list[0].weather[0].icon+".png";
+        }
+      }
     })
   }
   
+  UtilDate(date){
+    var aNumber : number = Number(date);
+    if(aNumber<10)
+      return "0"+aNumber;
+    else
+      return aNumber;
+  }
+
   GetTemperatureForecast(latitude, longitude){
     var url = "https://api.openweathermap.org/data/2.5/forecast?lat="+latitude+"&lon="+longitude+"&appid=124e8fe73f164ffb8af4ed5817deb342";
     this.httpClient.get(url).subscribe((temperaturedataF)=>{
@@ -71,11 +109,14 @@ export class Tab2Page {
     var url = "https://api.openweathermap.org/data/2.5/forecast?lat="+latitude+"&lon="+longitude+"&appid=124e8fe73f164ffb8af4ed5817deb342";
     this.httpClient.get(url).subscribe((temperaturedataW)=>{
       var obj = <any>temperaturedataW;
-      for(let x in this.week){
-        this.temperatureW[x] = ((parseFloat(obj.list[x].main.temp)-273.15).toFixed(2)).toString()+"°C";
-        this.typeW[x] = obj.list[x].weather[0].main;
-        this.desW[x] = obj.list[x].weather[0].description;
-        this.iconW[x] = "http://openweathermap.org/img/w/"+obj.list[0].weather[0].icon+".png";
+      for(let x in obj.list){
+        if(obj.list[x].dt_txt.includes("12:00:00")){
+          this.temperatureW[x] = ((parseFloat(obj.list[x].main.temp)-273.15).toFixed(2)).toString()+"°C";
+          this.typeW[x] = obj.list[x].weather[0].main;
+          this.desW[x] = obj.list[x].weather[0].description;
+          this.dayW=obj.list[x].dt_txt;
+          this.iconW[x] = "http://openweathermap.org/img/w/"+obj.list[0].weather[0].icon+".png";
+        }
       }
     })
   }

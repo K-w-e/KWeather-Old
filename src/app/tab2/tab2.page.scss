@@ -1,3 +1,40 @@
-.prova{
+#today{
     font-size: 36px;
 }
+
+.sun{
+    background: white
+    url("img/sun.png") no-repeat;
+    -webkit-animation: animate 4s linear infinite;
+}
+
+.rain{
+    background: white
+    url("img/rain.gif") no-repeat;
+    background-position: 500px 120px;
+    background-size: 100px 100px;
+}
+
+//download + fix colori
+.cloud{
+    background: white url(https://static.radulescu.me/examples/clouds/clouds1000.png);
+    background: white url(https://static.radulescu.me/examples/clouds/clouds1000.png) 0 200px,
+    white url(https://static.radulescu.me/examples/clouds/clouds1200_1.png) 0 300px,
+    white url(https://static.radulescu.me/examples/clouds/clouds1000_blur3.png) 100px 250px;
+      animation: cloud 20s linear infinite;
+  }
+  
+    @keyframes sun {
+    from { background-position: -300px -300px; }
+    to { background-position: 400px 400px; }
+  }
+
+  @keyframes cloud{
+    0% {
+      background-position: 0 200px, 0 300px, 100px 250px;
+    }
+    100% {
+      background-position: 1000px 200px, 1200px 300px, 1100px 250px;
+    }
+  
+  }
