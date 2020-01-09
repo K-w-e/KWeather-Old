@@ -17,17 +17,17 @@
       <img src={{icon}} style="width: 100px;"/>
       <ion-grid>
         <ion-row>
-          <ion-col size="2">
+          <ion-col>
             <div *ngFor="let temp of temperatureT">
               {{temp}}
             </div>
           </ion-col>
-          <ion-col size="2">
+          <ion-col>
             <div *ngFor="let type of typeT">
               {{type}}
             </div>
           </ion-col>
-          <ion-col size="3">
+          <ion-col>
             <div *ngFor="let des of desT">
               {{des}}
             </div>
@@ -45,17 +45,17 @@
     <p>Settimana entrante:</p>
     <ion-grid>
       <ion-row>
-        <ion-col size="2">
+        <ion-col>
           <div *ngFor="let temp of temperatureW">
             {{temp}}
           </div>
         </ion-col>
-        <ion-col size="2">
+        <ion-col>
           <div *ngFor="let type of typeW">
             {{type}}
           </div>
         </ion-col>
-        <ion-col size="2">
+        <ion-col>
           <div *ngFor="let des of desW">
             {{des}}
           </div>

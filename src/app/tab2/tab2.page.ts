@@ -60,6 +60,21 @@ export class Tab2Page {
       this.des = obj.weather[0].description;
       this.temperature = ((parseFloat(obj.main.temp)-273.15).toFixed(2)).toString()+"°C";
       this.humidity = obj.main.humidity;
+      /*
+        01x - Clear Sky
+        02x - Few Clouds
+        03x - Scattered Clouds
+        04x - Broken Clouds
+        09x - Shower Rain
+        10x - Rain
+        11x - Thunderstorm
+        13x - Snow
+        50x - Mist
+
+        x --> d/n
+        d - day
+        n - night
+      */
       console.log(this.icon);
       if(this.icon=="http://openweathermap.org/img/w/01d.png")
         document.getElementById("today").classList.add('sun');

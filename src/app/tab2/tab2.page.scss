@@ -1,11 +1,11 @@
 #today{
-    font-size: 36px;
+    font-size: 6vw;
 }
 
 .sun{
     background: white
     url("img/sun.png") no-repeat;
-    -webkit-animation: animate 4s linear infinite;
+    -webkit-animation: sun 4s linear infinite;
 }
 
 .rain{
