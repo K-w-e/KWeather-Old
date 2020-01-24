@@ -1,7 +1,11 @@
-.cities{
-    color: cyan;
+ion-label::first-letter{
+    text-transform: uppercase;
 }
 
-.temp{
-    color: cyan;
+.tempT{
+    float: right;
+}
+
+ion-icon{
+// Grandezza ?
 }
