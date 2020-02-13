@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { Tab2Page } from './tab2.page';
 
 import { ChartsModule } from 'ng2-charts';
+import { Tab3Page } from '../tab3/tab3.page';
+//import { SrcTEST } from '../tab3/tab3.page';
 
 @NgModule({
   imports: [
@@ -15,6 +17,7 @@ import { ChartsModule } from 'ng2-charts';
     ChartsModule,
     RouterModule.forChild([{ path: '', component: Tab2Page }])
   ],
-  declarations: [Tab2Page],
+  declarations: [Tab2Page, Tab3Page],
+  entryComponents: [Tab3Page]
 })
 export class Tab2PageModule {}

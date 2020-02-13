@@ -1,3 +1,24 @@
-<ion-app>
+<!--<ion-app>
   <ion-router-outlet></ion-router-outlet>
+</ion-app>-->
+
+<ion-app id="test" class="lightMode">
+  <ion-menu side="start">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Testing menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-item>
+          <ion-label>Tema scuro</ion-label>
+          <ion-toggle slot="end" id="theme" (click)="changeStyle()"></ion-toggle>
+        </ion-item>
+        <ion-item>Test 2</ion-item>
+        <ion-item>Test 3</ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  <ion-router-outlet id="content1" main></ion-router-outlet>
 </ion-app>

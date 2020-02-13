@@ -28,6 +28,6 @@ export class Giorno{
     }
 
     getTimeString(){
-        return this.time.toLocaleTimeString('it-IT');
+        return this.time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     }
 }

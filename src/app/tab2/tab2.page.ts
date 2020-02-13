@@ -1,9 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HttpClient } from '@angular/common/http';
-import { Platform } from '@ionic/angular';
+import { Platform, ModalController, MenuController } from '@ionic/angular';
 import { Giorno } from '../Model/Giorno';
 import { Chart } from 'chart.js';
+import { Tab3Page } from '../tab3/tab3.page';
 
 @Component({
   selector: 'app-tab2',
@@ -38,17 +39,12 @@ export class Tab2Page {
   typeT = [];
   giorni = [];
 
+  AirQuality:string="";
 
-
-  @ViewChild('lineCanvas', {static: false}) lineCanvas;
-  lineChart: any;
-
-
-
-  constructor(public httpClient:HttpClient, public geolocation:Geolocation, public platform:Platform){
+  constructor(public httpClient:HttpClient, public geolocation:Geolocation, public platform:Platform,
+    private modal: ModalController, public menuCtrl: MenuController){
     this.platform.ready().then(()=>{
       this.GetCurrentLocation();
-      //this.lineChartMethod();
     })
   }
 
@@ -60,6 +56,7 @@ export class Tab2Page {
       this.GetTemperatureForecast(latitude, longitude);
       this.GetTemperatureNextWeek(latitude, longitude);
       this.GetTemperatureToday(latitude, longitude);
+      this.GetAQI(latitude, longitude);
     })
   }
 
@@ -75,6 +72,8 @@ export class Tab2Page {
       this.humidity = obj.main.humidity;
       this.speed = obj.wind.speed;
       this.pressure = obj.main.pressure;
+
+      this.SetGraphic(this.des);
       /*
         01x - Clear Sky
         02x - Few Clouds
@@ -98,6 +97,35 @@ export class Tab2Page {
     })
   }
 
+  SetGraphic(description){
+    if(description=="clear sky")
+    {
+      console.log("CLEAR SKY");
+      document.getElementById("today").classList.add("clear_sky");
+    }
+    else if(description=="few clouds")
+    {
+      console.log("FEW CLOUDS");
+      document.getElementById("today").classList.add("few_clouds");
+    }
+    else if(description=="scattered clouds")
+    {
+      console.log("SCATTERED CLOUDS");
+      document.getElementById("today").classList.add("scattered_clouds");
+    }
+    else if(description=="broken clouds")
+    {
+      console.log("BROKEN CLOUDS");
+      document.getElementById("today").classList.add("broken_clouds");
+    }
+    else if(description=="rain")
+    {
+      console.log("RAIN");
+      document.getElementById("today").classList.add("rain");
+    }
+
+  }
+
   //Da sistemare, deve prendere le prossime ore!
   GetTemperatureToday(latitude, longitude){
     var date = this.today.getFullYear()+'-'+this.UtilDate((this.today.getMonth()+1))+'-'+this.UtilDate(this.today.getDate());
@@ -108,7 +136,6 @@ export class Tab2Page {
       var obj = <any>temperaturedataW;
       for(let x in obj.list){
         if(obj.list[x].dt_txt.includes(date) || obj.list[x].dt_txt.includes(date2)){
-          console.log(obj.list[x].dt_txt);
           this.temperatureT[x] = ((parseFloat(obj.list[x].main.temp)-273.15).toFixed(2)).toString()+"°C";
           this.typeT[x] = obj.list[x].weather[0].main;
           this.desT[x] = obj.list[x].weather[0].description;
@@ -117,8 +144,6 @@ export class Tab2Page {
           this.giorni[x] = new Giorno(this.temperatureT[x], this.typeT[x], this.iconT[x], time);
         }
       }   
-      console.log(this.dayW);
-      console.log(this.temperatureW);  
     })
   }
   
@@ -144,69 +169,44 @@ export class Tab2Page {
   GetTemperatureNextWeek(latitude, longitude){
     var url = "https://api.openweathermap.org/data/2.5/forecast?lat="+latitude+"&lon="+longitude+"&appid=124e8fe73f164ffb8af4ed5817deb342";
     this.httpClient.get(url).subscribe((temperaturedataW)=>{
+      let y=0;
       var obj = <any>temperaturedataW;
       for(let x in obj.list){
         if(obj.list[x].dt_txt.includes("12:00:00")){
-          this.temperatureW[x] = ((parseFloat(obj.list[x].main.temp)-273.15).toFixed(2)).toString()+"°C";
-          this.typeW[x] = obj.list[x].weather[0].main;
-          this.desW[x] = obj.list[x].weather[0].description;
-          this.dayW[x]=obj.list[x].dt_txt;
-          this.iconW[x] = "http://openweathermap.org/img/w/"+obj.list[0].weather[0].icon+".png";
+          this.temperatureW[y] = Math.round((parseFloat(obj.list[x].main.temp)-273.15)).toString()+"°C";
+          this.typeW[y] = obj.list[x].weather[0].main;
+          this.desW[y] = obj.list[x].weather[0].description;
+          this.dayW[y]=obj.list[x].dt_txt;
+          this.iconW[y] = "http://openweathermap.org/img/w/"+obj.list[0].weather[0].icon+".png";
+          y++;
         }
       }
     })
-   
   }
 
-  ngOnInit(){
-    this.showChart();
+  GetAQI(latitude, longitude){
+    var url = "https://api.airvisual.com/v2/nearest_city?lat="+latitude+"&lon="+longitude+"&key=ece4a0d5-c9d1-49eb-91b9-544116deb7bf"
+    this.httpClient.get(url).subscribe((API)=>{
+      var obj = <any>API;
+      this.AirQuality = obj.data.current.pollution.aqius;
+    }) 
   }
 
-  showChart() {
-    var ctx = (<any>document.getElementById('chart')).getContext('2d');
-    var chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ["prova1", "34", "giornoX", "giornoY"],  //giorni
-        datasets: [{
-          label: "Test",
-          data: [2, 12, -2, 34],  //temperature 
-        }]
-      }
-    })
+  toggleMenu(){
+    this.menuCtrl.toggle();
+    var toggle = document.getElementById("theme");
   }
 
-/*
-  lineChartMethod() {
-    this.lineChart = new Chart(this.lineCanvas.nativeElement, {
-      type: 'line',
-      data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'November', 'December'],
-        datasets: [
-          {
-            label: 'Sell per week',
-            fill: false,
-            lineTension: 0.1,
-            backgroundColor: 'rgba(75,192,192,0.4)',
-            borderColor: 'rgba(75,192,192,1)',
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: 'rgba(75,192,192,1)',
-            pointBackgroundColor: '#fff',
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-            pointHoverBorderColor: 'rgba(220,220,220,1)',
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data: [65, 59, 80, 81, 56, 55, 40, 10, 5, 50, 10, 15],
-            spanGaps: false,
-          }
-        ]
-      }
+  public changeStyle(){
+    var app = document.getElementById("app");
+    app.classList.toggle("darkMode");
+    app.classList.toggle("lightMode");
+  }
+
+  async openModal(){
+    const myModal = await this.modal.create({
+      component: Tab3Page
     });
-  }*/
+    await myModal.present();
+  }
 }

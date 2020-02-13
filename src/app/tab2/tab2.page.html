@@ -1,10 +1,12 @@
-<ion-app>
+<ion-app class="lightMode" id="app">
   <ion-header>
     <ion-toolbar>
       <ion-title>
-        Meteo GPS
+        <ion-icon name="menu" (click)="toggleMenu()" style="float: left;"></ion-icon>
+        <ion-icon name="search" (click)="openModal()" id="openModal"></ion-icon>
       </ion-title>
     </ion-toolbar>
+    
   </ion-header>
   <ion-content class="content ion-padding">  
 
@@ -32,15 +34,6 @@
                 </ion-row>
               </ion-grid>
             </span>
-           <!--<ion-card>
-              <ion-card-content>
-                <canvas lineCanvas></canvas>
-              </ion-card-content>
-            </ion-card>-->
-            <div style="display: block">
-              <canvas id="chart"></canvas>
-            </div>
-
             
             <span id="info">
               <ion-grid>
@@ -57,71 +50,20 @@
                     Vento: {{speed}} km/h
                   </ion-col>
                   <ion-col>
-                    Altro? :(
+                    Indice qualità aria: {{AirQuality}}
                   </ion-col>
                 </ion-row>
               </ion-grid>       
             </span>
         </span>
-      
       </div>
 
-   <!--
-       <ion-icon name="pin" id="pin"></ion-icon>
-      <div class="today">
-        <span id="place">{{place}}</span>
-        <br>
-        <span id="temp">{{temperature}}</span> {{type}}<br>
-        Situazione: {{des}}<br>
-        Umidità: {{humidity}}%<br>
-        <img src={{icon}} style="width: 100px;"/>
-        <ion-grid>
-          <ion-row>
-            <ion-col>
-              <div *ngFor="let temp of temperatureT">
-                {{temp}}
-              </div>
-            </ion-col>
-            <ion-col>
-              <div *ngFor="let type of typeT">
-                {{type}}
-              </div>
-            </ion-col>
-            <ion-col>
-              <div *ngFor="let des of desT">
-                {{des}}
-              </div>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </div>
-    <div>
-      Domani: <br>
-      Meteo: {{temperatureF}}, {{typeF}}<br>
-      Situazione: {{desF}}<br>
-      <img src="{{iconF}}" style="width: 100px;"/>
-    </div>
-  
-    <p>Settimana entrante:</p>
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          <div *ngFor="let temp of temperatureW">
-            {{temp}}
-          </div>
-        </ion-col>
-        <ion-col>
-          <div *ngFor="let type of typeW">
-            {{type}}
-          </div>
-        </ion-col>
-        <ion-col>
-          <div *ngFor="let des of desW">
-            {{des}}
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>-->
-    
+      <ion-list id="nextWeek">
+        <ion-item *ngFor="let day of dayW; let i = index">
+          <ion-label>{{day}}: 
+            <span style="float: right;">{{temperatureW[i]}}</span>            
+          </ion-label>
+        </ion-item>
+      </ion-list>
 </ion-content>
 </ion-app>

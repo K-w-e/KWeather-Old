@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Platform } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
 import { Storage, IonicStorageModule } from '@ionic/storage';
+import * as $ from 'jquery';
+import { ModalCityPage } from '../modal-city/modal-city.page';
 
 @Component({
   selector: 'app-tab3',
@@ -15,7 +17,7 @@ export class Tab3Page {
   icon:string="";
   humidity:string="";
   temperature:string="";
-
+  des:string="";
 
   cities = [];
   i:number=0;
@@ -24,20 +26,32 @@ export class Tab3Page {
   testing = [];
 
   test:string="";
-  prova:number;
+  indice:number;
 
-  constructor(public httpClient:HttpClient, public platform:Platform, public storageService: Storage){
+  constructor(public httpClient:HttpClient, public platform:Platform, public storageService: Storage, private modal: ModalController,
+    private modal2: ModalController){
     this.platform.ready().then(()=>{
       this.Get();
       this.storageService.length().then((keysLength: Number) => {
-        this.prova=keysLength.valueOf();
+        this.indice=keysLength.valueOf();
       });
+      document.getElementById("today").style.visibility = "hidden";
     })
   }
 
   searchCity(){
     this.GetCurrentTemperature();
+    this.showBtn();
+    this.showThings();
   } 
+
+  showThings(){
+    document.getElementById("today").style.visibility = "visible";
+  }
+
+  showBtn(){
+   // document.getElementsByClassName("btn");
+  }
 
   GetCurrentTemperature(){
     var url = "https://api.openweathermap.org/data/2.5/weather?q="+this.city+"&appid=124e8fe73f164ffb8af4ed5817deb342";
@@ -46,24 +60,27 @@ export class Tab3Page {
       this.place = obj.name;  
       this.type = obj.weather[0].main;
       this.humidity = obj.main.humidity;
+      this.des = obj.weather[0].description;
       this.icon = "http://openweathermap.org/img/w/"+obj.weather[0].icon+".png";
       this.temperature = ((parseFloat(obj.main.temp)-273.15).toFixed(2)).toString()+"°C";
     })
   }
 
   Set(){
-    this.storageService.set(this.prova.toString(), this.city).then(result => {
-      this.prova++;
+    this.storageService.set(this.city, this.city).then(result => {
+      this.indice++;
       this.Get();
       console.log(this.cities);
+      console.log(this.indice);
     }).catch(e => {
       console.log("error: " + e); 
     });        
   }
 
   Get(){
+    this.clearList();
     this.storageService.forEach((value: any, key: string, iterationNumber: Number) => {
-      this.cities[key] = value;
+      this.cities[(iterationNumber.valueOf()-1).toString()] = value;
     }).then(
       (result) => {
         this.GetWeatherFromDB();
@@ -86,27 +103,42 @@ export class Tab3Page {
   }
 
   clearDB(){
-    this.prova=0;
+    this.indice=0;
     this.storageService.clear();
     this.clearList();
     this.Get();
-
   }
 
   removeCity(city){
     let index = this.cities.indexOf(city);
     this.cities.splice(index, 1);
     this.temperatureTEST.splice(index, 1);
-    this.storageService.remove(index.toString()); 
-    /*this.cities = this.cities.filter(function(el) { 
-      return el != null;
-    });
-    this.temperatureTEST = this.temperatureTEST.filter(function(el){
-      return el != null;
-    });*/
-    this.prova--;
+    this.storageService.remove(city); 
+    this.Get();
+    this.indice--;
     console.log(this.cities);
-    console.log(this.prova);
-
   }
+
+  remove(){
+    $(".btn").each(function() {
+      $(this).toggleClass("remove");
+    });
+  }
+
+  closeModal(){
+    this.modal.dismiss();
+  }
+
+  cityClick(city){
+    console.log(city);
+    this.openModal();
+  }
+
+  async openModal(){
+    const myModal = await this.modal.create({
+      component: ModalCityPage
+    });
+    await myModal.present();
+  }
+  
 }
