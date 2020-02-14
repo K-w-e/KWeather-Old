@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
-
-import { Platform } from '@ionic/angular';
+import { HttpClient } from '@angular/common/http';
+import { Storage, IonicStorageModule } from '@ionic/storage';
+import { Platform, ModalController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import * as $ from 'jquery';
+import { ModalCityPage } from './modal-city/modal-city.page';
+
 
 @Component({
   selector: 'app-root',
@@ -11,12 +15,22 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 })
 
 export class AppComponent {
+  cities = [];
+  url = [];
+  temperature = [];
+  indice:number;
+
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    public httpClient:HttpClient,
+    public storageService: Storage,
+    private modal: ModalController
   ) {
     this.initializeApp();
+    this.Get();
+    this.GetWeatherFromDB();
   }
 
   initializeApp() {
@@ -40,6 +54,58 @@ export class AppComponent {
     this.change2();
   }
 
-  
+  Get(){
+    //this.clearList();
+    this.storageService.forEach((value: any, key: string, iterationNumber: Number) => {
+      this.cities[(iterationNumber.valueOf()-1).toString()] = value;
+    }).then(
+      (result) => {
+        this.GetWeatherFromDB();
+      });
+  }
+
+  menuOpened(){
+    this.Get();
+  }
+
+  GetWeatherFromDB() {
+    for(let k in this.cities){
+      this.url[k] = "https://api.openweathermap.org/data/2.5/weather?q="+this.cities[k]+"&appid=124e8fe73f164ffb8af4ed5817deb342";
+      this.httpClient.get(this.url[k]).subscribe((temperaturedata)=>{
+        var obj = <any>temperaturedata;
+        this.temperature[k] = ((parseFloat(obj.main.temp)-273.15).toFixed(2)).toString()+"°C";
+      })
+    }
+  }
+
+  removeCity(city){
+    let index = this.cities.indexOf(city);
+    this.cities.splice(index, 1);
+    this.temperature.splice(index, 1);
+    this.storageService.remove(city); 
+    this.Get();
+    this.indice--;
+    console.log(this.cities);
+  }
+
+  remove(){
+    $(".btn").each(function() {
+      $(this).toggleClass("remove");
+    });
+  }
+
+  cityClick(cityM){
+    this.openModalCity(cityM);
+  }
+
+  async openModalCity(cityM){
+    const myModal = await this.modal.create({
+      component: ModalCityPage,
+      componentProps: { 
+        city: cityM,
+      }
+    });
+    await myModal.present();
+  }
   
 }
