@@ -6,35 +6,96 @@
       </ion-title>
     </ion-toolbar>
   </ion-header>
+  <ion-content class="content ion-padding">  
 
-  <ion-content padding>  
+    <ion-icon name="pin" id="pin"></ion-icon>
+    <div class="today" id="today">
+      <span id="place">{{place}}</span>
+      <br>
+      <span id="temp">{{temperature}}<br>
+        <span id="des">{{des}}</span><br>
+          <span id="source"><ion-icon name="information-circle" id="sourceIcon"></ion-icon>OpenWeatherMap</span>
+            <span id="forecastNextHour">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12">
+                    <ion-segment scrollable>
+                      <ion-segment *ngFor="let giorno of giorni">
+                        <div class="nextHours">
+                          <ion-label>{{giorno.getTimeString()}}</ion-label><br>
+                          <ion-label><img src={{giorno.getIcon()}}/></ion-label><br>
+                          <ion-label>{{giorno.getTemp()}}</ion-label><br>                          
+                        </div>
+                      </ion-segment>
+                    </ion-segment>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </span>
+           <!--<ion-card>
+              <ion-card-content>
+                <canvas lineCanvas></canvas>
+              </ion-card-content>
+            </ion-card>-->
+            <div style="display: block">
+              <canvas id="chart"></canvas>
+              <ion-button (click)="update()">Update!</ion-button>
+            </div>
 
-    <div style="position:relative; bottom:15px" id="today">
-      Attualmente ti trovi qui: {{place}}!<br>
-      Meteo: {{temperature}}, {{type}}<br>
-      Situazione: {{des}}<br>
-      Umidità: {{humidity}}%<br>
-      <img src={{icon}} style="width: 100px;"/>
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <div *ngFor="let temp of temperatureT">
-              {{temp}}
-            </div>
-          </ion-col>
-          <ion-col>
-            <div *ngFor="let type of typeT">
-              {{type}}
-            </div>
-          </ion-col>
-          <ion-col>
-            <div *ngFor="let des of desT">
-              {{des}}
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </div>
+            
+            <span id="info">
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
+                    Umidità: {{humidity}}%
+                  </ion-col>
+                  <ion-col>
+                    Pressione: {{pressure}} hPa
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    Vento: {{speed}} km/h
+                  </ion-col>
+                  <ion-col>
+                    Altro? :(
+                  </ion-col>
+                </ion-row>
+              </ion-grid>       
+            </span>
+        </span>
+      
+      </div>
+
+   <!--
+       <ion-icon name="pin" id="pin"></ion-icon>
+      <div class="today">
+        <span id="place">{{place}}</span>
+        <br>
+        <span id="temp">{{temperature}}</span> {{type}}<br>
+        Situazione: {{des}}<br>
+        Umidità: {{humidity}}%<br>
+        <img src={{icon}} style="width: 100px;"/>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <div *ngFor="let temp of temperatureT">
+                {{temp}}
+              </div>
+            </ion-col>
+            <ion-col>
+              <div *ngFor="let type of typeT">
+                {{type}}
+              </div>
+            </ion-col>
+            <ion-col>
+              <div *ngFor="let des of desT">
+                {{des}}
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
     <div>
       Domani: <br>
       Meteo: {{temperatureF}}, {{typeF}}<br>
@@ -61,7 +122,7 @@
           </div>
         </ion-col>
       </ion-row>
-    </ion-grid>
+    </ion-grid>-->
     
 </ion-content>
 </ion-app>
