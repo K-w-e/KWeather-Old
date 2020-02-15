@@ -1,7 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
+import { Temperature } from '../Model/Temperature';
+import { TemperatureTime } from '../Model/TemperatureTime';
+import { TemperatureService } from '../temperature.service';
 import { Giorno } from '../Model/Giorno';
+import { Observable, of, from } from 'rxjs';
+import { TempTest } from '../Model/temp/TempTest';
+import { TempWeek } from '../Model/temp/TempWeek';
+import { AirVisual } from '../Model/pollution/AirVisual';
 
 @Component({
   selector: 'app-modal-city',
@@ -9,7 +16,7 @@ import { Giorno } from '../Model/Giorno';
   styleUrls: ['./modal-city.page.scss'],
 })
 export class ModalCityPage implements OnInit {
-  city:string;
+  /*city:string;
 
   constructor(private modal: ModalController, public httpClient: HttpClient) {
 
@@ -71,26 +78,6 @@ export class ModalCityPage implements OnInit {
       this.pressure = obj.main.pressure;
 
       this.SetGraphic(this.des);
-      /*
-        01x - Clear Sky
-        02x - Few Clouds
-        03x - Scattered Clouds
-        04x - Broken Clouds
-        09x - Shower Rain
-        10x - Rain
-        11x - Thunderstorm
-        13x - Snow
-        50x - Mist
-
-        x --> d/n
-        d - day
-        n - night
-      */
-      console.log(this.icon);
-      if(this.icon=="http://openweathermap.org/img/w/01d.png")
-        document.getElementById("today").classList.add('sun');
-      else if(this.icon=="http://openweathermap.org/img/w/04d.png") 
-        document.getElementById("today").classList.add('cloud');
     })
   }
 
@@ -187,7 +174,7 @@ export class ModalCityPage implements OnInit {
       var obj = <any>API;
       this.AirQuality = obj.data.current.pollution.aqius;
     }) 
-  }
+  }*/
 
   /*toggleMenu(){
     this.menuCtrl.toggle();
@@ -200,4 +187,151 @@ export class ModalCityPage implements OnInit {
     app.classList.toggle("lightMode");
   }*/
 
+
+   /////////////   OK
+ today = new Date();
+ temperature: Temperature;
+ temperatureWeek: Array<TemperatureTime> = [];
+ temperatureTime: Array<TemperatureTime> = [];
+ airQuality: string;
+ latitude;
+ longitude;
+ atemperature$ : Observable<TempTest>;
+ tempWeek$ : Observable<TempWeek>;
+ giorni = [];
+ temperatureToday:string="";
+ airVisual$ : Observable<AirVisual>;
+ descriptionToday: string;
+ ////////////
+ city: string;
+
+
+ constructor(public httpClient:HttpClient, 
+   public platform:Platform,
+   private modal: ModalController, 
+   private temperatureModel: TemperatureService){
+   this.getAPI();
+ }
+
+ ngOnInit() {
+   console.log("OnInit");
+   this.getAPI();
+   
+ }
+ 
+ getAPI(){
+   console.log("method");
+   this.atemperature$ = this.temperatureModel.getTempS(this.city);
+   this.tempWeek$ = this.temperatureModel.getTemperatureWeekS(this.city);
+   this.airVisual$ = this.temperatureModel.GetAQIS(this.city);
+   this.getGiorni();
+   this.getTemperatureC();
+   this.getAirQuality();
+
+ }
+
+ getTemperatureC(){
+  this.atemperature$.subscribe(temp => (
+    this.setTemperatureC(temp)
+  ));
 }
+
+setTemperatureC(temp : TempTest){
+ this.temperatureToday = ((parseFloat(temp.main.temp.toString())-273.15).toFixed(2)).toString()+"°C";
+ this.descriptionToday = temp.weather[0].description;
+ this.SetGraphic(this.descriptionToday);
+}
+
+ getAirQuality(){
+   this.airVisual$.subscribe(av => (
+     this.setAirQuality(av)
+   ));
+ }
+
+ getGiorni(){
+   this.tempWeek$.subscribe(tempWeek => (
+     this.setGiorni(tempWeek)
+   ));
+
+ }
+
+ setGiorni(t : TempWeek){
+   var date = this.today.getFullYear()+'-'+this.UtilDate((this.today.getMonth()+1))+'-'+this.UtilDate(this.today.getDate());
+   var date2 = this.today.getFullYear()+'-'+this.UtilDate((this.today.getMonth()+1))+'-'+this.UtilDate(this.today.getDate()+1);
+   
+   console.log("OK + "  + t.city.name);
+   for(let x in t.list){
+     if(t.list[x].dt_txt.includes(date) || t.list[x].dt_txt.includes(date2)){
+       console.log(t.list[x])
+       let temperatureT = ((parseFloat(t.list[x].main.temp)-273.15).toFixed(2)).toString()+"°C";
+       let typeT = t.list[x].weather[0].main;
+       let desT = t.list[x].weather[0].description;
+       let iconT = this.checkIcon(desT);
+       var time = new Date(t.list[x].dt_txt);
+       this.giorni[x] = (new Giorno(temperatureT, typeT, iconT, time));
+     }
+   }  
+ }
+
+ checkIcon(desT): string{
+  if(desT=="clear sky")
+    return "assets/img/sun.png";
+  else if(desT=="few clouds")
+    return "assets/img/cloud-sunMore.png";
+  else if(desT=="broken clouds" || desT=="scattered clouds" || desT=="overcast clouds")
+    return "assets/img/cloud.png";
+  else if(desT.includes("rain"))
+    return "assets/img/rain.png";
+}
+
+SetGraphic(description){
+  if(description=="clear sky")
+  {
+    console.log("CLEAR SKY");
+    document.getElementById("today3").classList.add("clear_sky");
+  }
+  else if(description=="few clouds")
+  {
+    console.log("FEW CLOUDS");
+    document.getElementById("today3").classList.add("few_clouds");
+  }
+  else if(description=="scattered clouds")
+  {
+    console.log("SCATTERED CLOUDS");
+    document.getElementById("today3").classList.add("scattered_clouds");
+  }
+  else if(description=="broken clouds")
+  {
+    console.log("BROKEN CLOUDS");
+    document.getElementById("today3").classList.add("broken_clouds");
+  }
+  else if(description=="rain" || description.includes("rain"))
+  {
+    console.log("RAIN");
+    document.getElementById("today3").classList.add("rain");
+  }
+  else if(description=="overcast clouds")
+  {
+    console.log("OVERCAST CLOUDS");
+    document.getElementById("today3").classList.add("broken_clouds");
+  }
+
+}
+
+ setAirQuality(av : AirVisual){
+   this.airQuality = (av.data.current.pollution.aqius).toString();
+ }
+
+ UtilDate(date){
+  let aNumber : number = Number(date);
+  if(aNumber<10)
+    return "0"+aNumber;
+  else
+    return aNumber;
+  }
+
+  closeModal(){
+    this.modal.dismiss();
+  }
+}
+

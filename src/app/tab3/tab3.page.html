@@ -7,10 +7,10 @@
  
 </ion-header>
 
-<ion-content padding>
+<ion-content class="content ion-padding">
 <ion-searchbar animated type="text" [(ngModel)]="city" placeholder="Inserisci città qui" debounce="500"></ion-searchbar>
 <br><br>
-<ion-button (click)="searchCity()" class="mainBtn">Cerca</ion-button>
+<ion-button (click)="getAPI()" class="mainBtn">Cerca</ion-button>
 <ion-button (click)="Set()" class="mainBtn">Salva città</ion-button>
 
 <br><br><br>
@@ -19,54 +19,8 @@
     Meteo: {{temperature}},{{type}}<br>
     Umidità: {{humidity}}%<br>
     <img src={{icon}} style="width: 100px;"/>
-<<<<<<< HEAD
-  </div>
-
-  <ion-button (click)="Set()">Salva città</ion-button>
-
-
-  <p>Lista città salvate:<br></p>
-  <ion-list>
-    <ion-item *ngFor="let city of cities; let i = index">
-      <ion-label>{{city}}: <span class="tempT">{{temperatureTEST[i]}}</span>
-        <button danger (click)="removeCity(city)"><ion-icon name="trash"></ion-icon></button>
-      </ion-label>
-    </ion-item>
-  <!--  <ion-item *ngFor="let temp of temperatureTEST">
-      <ion-label>{{temp}}</ion-label>
-    </ion-item>-->
-  </ion-list>
-  <!--<ion-grid>
-    <ion-row> 
-      <ion-col size="3">
-        <div *ngFor="let item of cities; let i = index" id="{{item}}">
-          {{item}}: {{temperatureTEST[i]}}
-        </div>
-      </ion-col>
-      <ion-col size="3">
-        <div *ngFor="let t of temperatureTEST" class="temp">
-          {{t}}
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>-->
-
-
-
- <!-- <ion-card (click)="selectedCity()" style="visibility: hidden;">
-    <ion-card-header>
-      <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-      <ion-card-title>Card Title</ion-card-title>
-    </ion-card-header>
-
-    <ion-card-content>
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum inventore est minus porro laboriosam laborum ab nostrum repellat accusantium esse et, quaerat eaque quas veritatis commodi, veniam in aspernatur delectus.
-    </ion-card-content>
-  </ion-card>-->
-  <ion-button (click)="clearDB()">Clear</ion-button>
-=======
   </div>-->
-    <div class="today" id="today">
+    <div class="today" id="today2">
     <!--  
       <ion-icon name="pin" id="pin"></ion-icon>
       <span id="place">{{place}}</span>
@@ -74,35 +28,56 @@
       <span id="temp">{{temperature}}
       <span id="des">{{des}}</span>
       -->
-      <ion-icon name="pin"></ion-icon>
+      <ion-icon name="pin" id="pin"></ion-icon>
       <div>
-        <span>{{place}}</span>
+        <span id="place" *ngIf="atemperature$ | async as temp; else loading">{{city}}</span>
         <br>
-        <span>{{temperature}}<br>
-          <span>{{des}}</span><br>
-              <span>
-                <ion-grid>
-                  <ion-row>
-                    <ion-col size="12">
-                      <ion-segment scrollable>
-                        <ion-segment *ngFor="let giorno of giorni">
-                          <div class="nextHours">
-                            <ion-label>{{giorno.getTimeString()}}</ion-label><br>
-                            <ion-label><img src={{giorno.getIcon()}}/></ion-label><br>
-                            <ion-label>{{giorno.getTemp()}}</ion-label><br>                          
-                          </div>
-                        </ion-segment>
-                      </ion-segment>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-              </span>
+        <span id="temp" *ngIf="atemperature$ | async as temp; else loading">{{temperatureToday}}<br></span>
+          <span id="des">{{descriptionToday}}</span><br>
+          <span id="forecastNextHour">
+            <ion-grid>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-segment scrollable>
+                    <ion-segment *ngFor="let giorno of giorni">
+                      <div class="nextHours">
+                        <ion-label>{{giorno.getTimeString()}}</ion-label><br>
+                        <ion-label><img src={{giorno.getIcon()}}/></ion-label><br>
+                        <ion-label>{{giorno.getTemp()}}</ion-label><br>                          
+                      </div>
+                    </ion-segment>
+                  </ion-segment>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </span>
       </div>
+
+      <span id="info">
+        <ion-grid>
+          <ion-row>
+            <ion-col *ngIf="atemperature$ | async as temp; else loading">
+              Umidità: {{temp.main.humidity}}%
+            </ion-col>
+            <ion-col *ngIf="atemperature$ | async as temp; else loading">
+              Pressione: {{temp.main.pressure}} hPa
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col *ngIf="atemperature$ | async as temp; else loading">
+              Vento: {{temp.wind.speed}} km/h
+            </ion-col>
+            <ion-col *ngIf="atemperature$ | async as temp; else loading">
+              Indice qualità aria: {{airQuality}}
+            </ion-col>
+          </ion-row>
+        </ion-grid>       
+      </span>
+    </div>
       <ion-list id="nextWeek">
         <ion-item *ngFor="let day of dayW; let i = index">
           <ion-label>{{day}}: 
-            <span style="float: right;">{{temperatureW[i]}}</span>            
+            <span style="float: right;">{{temperatureT[i]}}</span>            
           </ion-label>
         </ion-item>
       </ion-list>
@@ -124,7 +99,7 @@
                 </ion-row>
               </ion-grid>
             </span>-->
-    </div>
+    
 
  <!--
 <span id="list">
@@ -139,7 +114,6 @@
   </span>
  --> 
   
->>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
 
   
 </ion-content>

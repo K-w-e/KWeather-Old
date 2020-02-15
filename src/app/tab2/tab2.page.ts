@@ -1,93 +1,185 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit} from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HttpClient } from '@angular/common/http';
-<<<<<<< HEAD
-import { Platform } from '@ionic/angular';
-import { Giorno } from '../Model/Giorno';
-import { Chart } from 'chart.js';
-import { StatusBar } from '@ionic-native/status-bar';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
-=======
 import { Platform, ModalController, MenuController } from '@ionic/angular';
-import { Giorno } from '../Model/Giorno';
 import { Tab3Page } from '../tab3/tab3.page';
->>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
+import { Temperature } from '../Model/Temperature';
+import { TemperatureTime } from '../Model/TemperatureTime';
+import { TemperatureService } from '../temperature.service';
+import { Giorno } from '../Model/Giorno';
+import { Observable, of, from } from 'rxjs';
+import { TempTest } from '../Model/temp/TempTest';
+import { TempWeek } from '../Model/temp/TempWeek';
+import { AirVisual } from '../Model/pollution/AirVisual';
+
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
-export class Tab2Page {
-  place:string="";
-  type:string="";
-  icon:string="";
-  temperature:string="";
-  des:string="";
-  humidity:string="";
-  speed:string="";
-  pressure:string="";
 
-  typeF:string="";
-  temperatureF:string="";
-  desF:string="";
-  iconF:string="";
+export class Tab2Page implements OnInit {
 
-  typeW = [];
-  temperatureW = [];
-  desW = [];
-  iconW = [];
-  dayW = [];
 
+
+  /////////////   OK
   today = new Date();
-  temperatureT = [];
-  desT = [];
-  iconT = [];
-  typeT = [];
+  temperature: Temperature;
+  temperatureWeek: Array<TemperatureTime> = [];
+  temperatureTime: Array<TemperatureTime> = [];
+  airQuality: string;
+  latitude;
+  longitude;
+  atemperature$ : Observable<TempTest>;
+  tempWeek$ : Observable<TempWeek>;
   giorni = [];
+  temperatureToday:string="";
+  airVisual$ : Observable<AirVisual>;
+  descriptionToday: string;
+  ////////////
 
-<<<<<<< HEAD
-
-
-  @ViewChild('lineCanvas', {static: false}) lineCanvas;
-  lineChart: any;
-
-
-
-  constructor(public httpClient: HttpClient,
-    public geolocation: Geolocation,
-    public platform: Platform,
-    public statusBar: StatusBar){
-      this.statusBar.backgroundColorByHexString('#f4f5f8');
-=======
-  AirQuality:string="";
-
-  constructor(public httpClient:HttpClient, public geolocation:Geolocation, public platform:Platform,
-    private modal: ModalController, public menuCtrl: MenuController){
->>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
+  constructor(public httpClient:HttpClient, 
+    public geolocation:Geolocation, 
+    public platform:Platform,
+    private modal: ModalController, 
+    public menuCtrl: MenuController,
+    private temperatureModel: TemperatureService){
     this.platform.ready().then(()=>{
-      this.GetCurrentLocation();
-      this.showChart();
+      //this.GetCurrentLocation();
     })
   }
 
-  GetCurrentLocation(){
+  ngOnInit() {
+    console.log("OnInit");
+    this.getAPI();
+    
+  }
+  
+  getAPI(){
+    console.log("method");
     this.geolocation.getCurrentPosition().then((position)=>{
-      var latitude = position.coords.latitude;
-      var longitude = position.coords.longitude;
-      this.GetCurrentTemperature(latitude, longitude);
+    this.latitude = position.coords.latitude;
+    this.longitude = position.coords.longitude;
+    this.atemperature$ = this.temperatureModel.getTest(this.latitude, this.longitude);
+    this.tempWeek$ = this.temperatureModel.getTemperatureWeek(this.latitude, this.longitude);
+    this.airVisual$ = this.temperatureModel.GetAQI(this.latitude, this.longitude);
+    this.getGiorni();
+    this.getTemperatureC();
+    this.getAirQuality();
+    });
+    console.log(this.atemperature$);
+
+  }
+
+  getAirQuality(){
+    this.airVisual$.subscribe(av => (
+      this.setAirQuality(av)
+    ));
+
+  }
+
+  getGiorni(){
+    this.tempWeek$.subscribe(tempWeek => (
+      this.setGiorni(tempWeek)
+    ));
+
+  }
+
+  getTemperatureC(){
+    this.atemperature$.subscribe(temp => (
+      this.setTemperatureC(temp)
+    ));
+  }
+
+  setTemperatureC(temp : TempTest){
+    this.temperatureToday = ((parseFloat(temp.main.temp.toString())-273.15).toFixed(2)).toString()+"°C";
+    this.descriptionToday = temp.weather[0].description;
+    this.SetGraphic(this.descriptionToday);
+  }
+
+  setGiorni(t : TempWeek){
+    var date = this.today.getFullYear()+'-'+this.UtilDate((this.today.getMonth()+1))+'-'+this.UtilDate(this.today.getDate());
+    var date2 = this.today.getFullYear()+'-'+this.UtilDate((this.today.getMonth()+1))+'-'+this.UtilDate(this.today.getDate()+1);
+    
+    console.log("OK + "  + t.city.name);
+    for(let x in t.list){
+      if(t.list[x].dt_txt.includes(date) || t.list[x].dt_txt.includes(date2)){
+        console.log(t.list[x]);
+        let temperatureT = ((parseFloat(t.list[x].main.temp)-273.15).toFixed(2)).toString()+"°C";
+        let typeT = t.list[x].weather[0].main;
+        let desT = t.list[x].weather[0].description;
+        let iconT = this.checkIcon(desT);//"http://openweathermap.org/img/w/"+t.list[x].weather[0].icon+".png";
+        console.log(iconT);
+        var time = new Date(t.list[x].dt_txt);
+        this.giorni[x] = (new Giorno(temperatureT, typeT, iconT, time));
+        console.log(this.giorni[x]);
+      }
+    }  
+  }
+
+  checkIcon(desT): string{
+    if(desT=="clear sky")
+      return "assets/img/sun.png";
+    else if(desT=="few clouds")
+      return "assets/img/cloud-sunMore.png";
+    else if(desT=="broken clouds" || desT=="scattered clouds" || desT=="overcast clouds")
+      return "assets/img/cloud.png";
+    else if(desT.includes("rain"))
+      return "assets/img/rain.png";
+  }
+
+  setAirQuality(av : AirVisual){
+    this.airQuality = (av.data.current.pollution.aqius).toString();
+  }
+
+/*
+  GetCurrentLocation(){
+
+
+    this.geolocation.getCurrentPosition().then((position)=>{
+      console.log(this.temperatureModel.GetString());
+
+      //this.atemperature$ = this.temperatureModel.getTest(this.latitude, this.longitude);
+    //  console.log(this.atemperature$);
+    /*  obT.subscribe(
+        (t : Temperature) => this.temperature = t,
+        (error : any) => console.log('Observer got a complete notification')
+      );*/
+    //  console.log(this.temperature);
+     // console.log(this.temperature);
+   //   this.filterWeek(latitude, longitude);
+   //   this.airQuality = this.temperatureModel.GetAQI(latitude, longitude);
+      /*this.GetCurrentTemperature(latitude, longitude);
       this.GetTemperatureForecast(latitude, longitude);
       this.GetTemperatureNextWeek(latitude, longitude);
       this.GetTemperatureToday(latitude, longitude);
-<<<<<<< HEAD
-      this.showChart();
-=======
       this.GetAQI(latitude, longitude);
->>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
     })
   }
 
-  GetCurrentTemperature(latitude, longitude){
+  filterWeek(latitude, longitude){
+    this.temperatureWeek = this.temperatureModel.GetTemperatureNextWeek(latitude, longitude);
+    var date = this.today.getFullYear()+'-'+this.UtilDate((this.today.getMonth()+1))+'-'+this.UtilDate(this.today.getDate());
+    var date2 = this.today.getFullYear()+'-'+this.UtilDate((this.today.getMonth()+1))+'-'+this.UtilDate(this.today.getDate()+1);
+
+    for(let x in this.temperatureWeek){
+      if(this.temperatureWeek[x].getTime().toString().includes(date) || this.temperatureWeek[x].getTime().toString().includes(date2))
+        this.temperatureTime.push(this.temperatureWeek[x]);
+      if(!(this.temperatureWeek[x].getTime().toString().includes("12:00:00")))
+        this.temperatureWeek.splice(Number(x), 1);    
+    }
+  }*/
+
+  UtilDate(date){
+    let aNumber : number = Number(date);
+    if(aNumber<10)
+      return "0"+aNumber;
+    else
+      return aNumber;
+  }
+
+ /* GetCurrentTemperature(latitude, longitude){
     var url = "https://api.openweathermap.org/data/2.5/weather?lat="+latitude+"&lon="+longitude+"&appid=124e8fe73f164ffb8af4ed5817deb342";
     this.httpClient.get(url).subscribe((temperaturedata)=>{
       var obj = <any>temperaturedata;
@@ -99,34 +191,11 @@ export class Tab2Page {
       this.humidity = obj.main.humidity;
       this.speed = obj.wind.speed;
       this.pressure = obj.main.pressure;
-<<<<<<< HEAD
-=======
 
       this.SetGraphic(this.des);
->>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
-      /*
-        01x - Clear Sky
-        02x - Few Clouds
-        03x - Scattered Clouds
-        04x - Broken Clouds
-        09x - Shower Rain
-        10x - Rain
-        11x - Thunderstorm
-        13x - Snow
-        50x - Mist
-
-        x --> d/n
-        d - day
-        n - night
-      */
-      console.log(this.icon);
-      if(this.icon=="http://openweathermap.org/img/w/01d.png")
-        document.getElementById("today").classList.add('sun');
-      else if(this.icon=="http://openweathermap.org/img/w/04d.png") 
-        document.getElementById("today").classList.add('cloud');
     })
   }
-
+*/
   SetGraphic(description){
     if(description=="clear sky")
     {
@@ -148,15 +217,20 @@ export class Tab2Page {
       console.log("BROKEN CLOUDS");
       document.getElementById("today").classList.add("broken_clouds");
     }
-    else if(description=="rain")
+    else if(description=="rain" || description.includes("rain"))
     {
       console.log("RAIN");
       document.getElementById("today").classList.add("rain");
     }
+    else if(description=="overcast clouds")
+    {
+      console.log("OVERCAST CLOUDS");
+      document.getElementById("today").classList.add("broken_clouds");
+    }
 
   }
 
-  //Da sistemare, deve prendere le prossime ore!
+  /*
   GetTemperatureToday(latitude, longitude){
     var date = this.today.getFullYear()+'-'+this.UtilDate((this.today.getMonth()+1))+'-'+this.UtilDate(this.today.getDate());
     var date2 = this.today.getFullYear()+'-'+this.UtilDate((this.today.getMonth()+1))+'-'+this.UtilDate(this.today.getDate()+1);
@@ -201,15 +275,9 @@ export class Tab2Page {
     this.httpClient.get(url).subscribe((temperaturedataW)=>{
       let y=0;
       var obj = <any>temperaturedataW;
-      var y=0;
       for(let x in obj.list){
-<<<<<<< HEAD
-        if(obj.list[x].dt_txt.includes("12:00:00")){     
-          this.temperatureW[y] = ((parseFloat(obj.list[x].main.temp)-273.15).toFixed(2)).toString()+"°C";
-=======
         if(obj.list[x].dt_txt.includes("12:00:00")){
           this.temperatureW[y] = Math.round((parseFloat(obj.list[x].main.temp)-273.15)).toString()+"°C";
->>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
           this.typeW[y] = obj.list[x].weather[0].main;
           this.desW[y] = obj.list[x].weather[0].description;
           this.dayW[y]=obj.list[x].dt_txt;
@@ -220,32 +288,6 @@ export class Tab2Page {
     })
   }
 
-<<<<<<< HEAD
-  showChart() {
-    var ctx = (<any>document.getElementById('chart')).getContext('2d');
-    const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: this.dayW,  //giorni
-        datasets: [{
-          label: "Test",
-          data: this.temperatureW,//tempApp,  //temperature 
-        }]
-      }
-    })
-    console.log(chart.data.datasets);
-    //console.log(chart.data.labels);
-    for (let x of this.temperatureW) {
-      chart.update();
-   }
-    
-    
-  }
-
-  update(){
-    
-  // this.barChart.update();
-=======
   GetAQI(latitude, longitude){
     var url = "https://api.airvisual.com/v2/nearest_city?lat="+latitude+"&lon="+longitude+"&key=ece4a0d5-c9d1-49eb-91b9-544116deb7bf"
     this.httpClient.get(url).subscribe((API)=>{
@@ -253,7 +295,7 @@ export class Tab2Page {
       this.AirQuality = obj.data.current.pollution.aqius;
     }) 
   }
-
+*/
   toggleMenu(){
     this.menuCtrl.toggle();
     var toggle = document.getElementById("theme");
@@ -270,6 +312,5 @@ export class Tab2Page {
       component: Tab3Page
     });
     await myModal.present();
->>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
   }
 }

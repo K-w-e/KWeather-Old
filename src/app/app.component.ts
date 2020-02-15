@@ -26,8 +26,9 @@ export class AppComponent {
     private statusBar: StatusBar,
     public httpClient:HttpClient,
     public storageService: Storage,
-    private modal: ModalController
+    private modal: ModalController,
   ) {
+    statusBar.backgroundColorByHexString('#f4f5f8');
     this.initializeApp();
     this.Get();
     this.GetWeatherFromDB();
@@ -40,19 +41,25 @@ export class AppComponent {
     });
   }
 
+  changeStyle(){
+    let app = document.getElementById("app");
+    app.classList.toggle("darkMode");
+    app.classList.toggle("lightMode");
+
+    if(app.classList.contains("lightMode"))
+      this.statusBar.backgroundColorByHexString('#f4f5f8');
+    else
+      this.statusBar.backgroundColorByHexString('#989aa2');
+    this.change2();
+  }
+
   change2(){
     var menu = document.getElementById("test");
     menu.classList.toggle("darkMode");
     menu.classList.toggle("lightMode");
   }
 
-  changeStyle(){
-    var app = document.getElementById("app");
-    app.classList.toggle("darkMode");
-    app.classList.toggle("lightMode");
-
-    this.change2();
-  }
+  
 
   Get(){
     //this.clearList();

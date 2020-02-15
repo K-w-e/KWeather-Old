@@ -10,12 +10,12 @@
   </ion-header>
   <ion-content class="content ion-padding">  
 
-    <ion-icon name="pin" id="pin"></ion-icon>
+  <ion-icon name="pin" id="pin"></ion-icon>
     <div class="today" id="today">
-      <span id="place">{{place}}</span>
+      <span id="place" *ngIf="atemperature$ | async as temp; else loading">{{ temp.name }}</span>
       <br>
-      <span id="temp">{{temperature}}<br>
-        <span id="des">{{des}}</span><br>
+      <span id="temp">{{ temperatureToday }}<br>
+        <span id="des">{{ descriptionToday }}</span><br>
           <span id="source"><ion-icon name="information-circle" id="sourceIcon"></ion-icon>OpenWeatherMap</span>
             <span id="forecastNextHour">
               <ion-grid>
@@ -34,107 +34,28 @@
                 </ion-row>
               </ion-grid>
             </span>
-<<<<<<< HEAD
-           <!--<ion-card>
-              <ion-card-content>
-                <canvas lineCanvas></canvas>
-              </ion-card-content>
-            </ion-card>-->
-            <div style="display: block">
-              <canvas id="chart"></canvas>
-              <ion-button (click)="update()">Update!</ion-button>
-            </div>
-
-=======
->>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
             
             <span id="info">
               <ion-grid>
                 <ion-row>
-                  <ion-col>
-                    Umidità: {{humidity}}%
+                  <ion-col *ngIf="atemperature$ | async as temp; else loading">
+                    Umidità: {{temp.main.humidity}}%
                   </ion-col>
-                  <ion-col>
-                    Pressione: {{pressure}} hPa
+                  <ion-col *ngIf="atemperature$ | async as temp; else loading">
+                    Pressione: {{temp.main.pressure}} hPa
                   </ion-col>
                 </ion-row>
                 <ion-row>
-                  <ion-col>
-                    Vento: {{speed}} km/h
+                  <ion-col *ngIf="atemperature$ | async as temp; else loading">
+                    Vento: {{temp.wind.speed}} km/h
                   </ion-col>
                   <ion-col>
-<<<<<<< HEAD
-                    Altro? :(
-=======
-                    Indice qualità aria: {{AirQuality}}
->>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
+                    Indice qualità aria: {{airQuality}}
                   </ion-col>
                 </ion-row>
               </ion-grid>       
             </span>
         </span>
-<<<<<<< HEAD
-      
-      </div>
-
-   <!--
-       <ion-icon name="pin" id="pin"></ion-icon>
-      <div class="today">
-        <span id="place">{{place}}</span>
-        <br>
-        <span id="temp">{{temperature}}</span> {{type}}<br>
-        Situazione: {{des}}<br>
-        Umidità: {{humidity}}%<br>
-        <img src={{icon}} style="width: 100px;"/>
-        <ion-grid>
-          <ion-row>
-            <ion-col>
-              <div *ngFor="let temp of temperatureT">
-                {{temp}}
-              </div>
-            </ion-col>
-            <ion-col>
-              <div *ngFor="let type of typeT">
-                {{type}}
-              </div>
-            </ion-col>
-            <ion-col>
-              <div *ngFor="let des of desT">
-                {{des}}
-              </div>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </div>
-    <div>
-      Domani: <br>
-      Meteo: {{temperatureF}}, {{typeF}}<br>
-      Situazione: {{desF}}<br>
-      <img src="{{iconF}}" style="width: 100px;"/>
-    </div>
-  
-    <p>Settimana entrante:</p>
-    <ion-grid>
-      <ion-row>
-        <ion-col>
-          <div *ngFor="let temp of temperatureW">
-            {{temp}}
-          </div>
-        </ion-col>
-        <ion-col>
-          <div *ngFor="let type of typeW">
-            {{type}}
-          </div>
-        </ion-col>
-        <ion-col>
-          <div *ngFor="let des of desW">
-            {{des}}
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>-->
-    
-=======
       </div>
 
       <ion-list id="nextWeek">
@@ -144,6 +65,5 @@
           </ion-label>
         </ion-item>
       </ion-list>
->>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
 </ion-content>
 </ion-app>
