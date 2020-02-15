@@ -14,12 +14,14 @@ import { AppComponent } from './app.component';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage';
+import { ModalCityPage } from './modal-city/modal-city.page';
+import * as $ from 'jquery';
 /* * * * * */
 
 
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [AppComponent, ModalCityPage],
+  entryComponents: [ModalCityPage],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, IonicStorageModule.forRoot()] ,
   providers: [
     StatusBar,

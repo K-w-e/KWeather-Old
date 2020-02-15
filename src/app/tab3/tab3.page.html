@@ -1,24 +1,25 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Meteo Manuale
+      <ion-icon name="close" (click)="closeModal()"></ion-icon>
     </ion-title>
   </ion-toolbar>
+ 
 </ion-header>
 
 <ion-content padding>
-  <ion-item>
-    <ion-label position="floating">Inserire città qui</ion-label>
-    <ion-input type="text" [(ngModel)]="city"> </ion-input>
-  </ion-item>
+<ion-searchbar animated type="text" [(ngModel)]="city" placeholder="Inserisci città qui" debounce="500"></ion-searchbar>
 <br><br>
-<ion-button (click)="searchCity()">Cerca</ion-button>
+<ion-button (click)="searchCity()" class="mainBtn">Cerca</ion-button>
+<ion-button (click)="Set()" class="mainBtn">Salva città</ion-button>
+
 <br><br><br>
-  <div style="position:relative; bottom:15px">
+  <!--<div style="position:relative; bottom:15px ">
     Attualmente ti trovi qui: {{place}}!<br>
     Meteo: {{temperature}},{{type}}<br>
     Umidità: {{humidity}}%<br>
     <img src={{icon}} style="width: 100px;"/>
+<<<<<<< HEAD
   </div>
 
   <ion-button (click)="Set()">Salva città</ion-button>
@@ -63,5 +64,82 @@
     </ion-card-content>
   </ion-card>-->
   <ion-button (click)="clearDB()">Clear</ion-button>
+=======
+  </div>-->
+    <div class="today" id="today">
+    <!--  
+      <ion-icon name="pin" id="pin"></ion-icon>
+      <span id="place">{{place}}</span>
+      <img src={{icon}} style="width: 100px;"/>
+      <span id="temp">{{temperature}}
+      <span id="des">{{des}}</span>
+      -->
+      <ion-icon name="pin"></ion-icon>
+      <div>
+        <span>{{place}}</span>
+        <br>
+        <span>{{temperature}}<br>
+          <span>{{des}}</span><br>
+              <span>
+                <ion-grid>
+                  <ion-row>
+                    <ion-col size="12">
+                      <ion-segment scrollable>
+                        <ion-segment *ngFor="let giorno of giorni">
+                          <div class="nextHours">
+                            <ion-label>{{giorno.getTimeString()}}</ion-label><br>
+                            <ion-label><img src={{giorno.getIcon()}}/></ion-label><br>
+                            <ion-label>{{giorno.getTemp()}}</ion-label><br>                          
+                          </div>
+                        </ion-segment>
+                      </ion-segment>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </span>
+          </span>
+      </div>
+      <ion-list id="nextWeek">
+        <ion-item *ngFor="let day of dayW; let i = index">
+          <ion-label>{{day}}: 
+            <span style="float: right;">{{temperatureW[i]}}</span>            
+          </ion-label>
+        </ion-item>
+      </ion-list>
 
+            <!--<span id="forecastNextHour">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12">
+                    <ion-segment scrollable>
+                      <ion-segment *ngFor="let giorno of giorni">
+                        <div class="nextHours">
+                          <ion-label>{{giorno.getTimeString()}}</ion-label><br>
+                          <ion-label><img src={{giorno.getIcon()}}/></ion-label><br>
+                          <ion-label>{{giorno.getTemp()}}</ion-label><br>                          
+                        </div>
+                      </ion-segment>
+                    </ion-segment>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </span>-->
+    </div>
+
+ <!--
+<span id="list">
+    <p>Lista città salvate: <ion-icon name="cog" (click)="remove()"></ion-icon><br></p>
+    <ion-list>
+      <ion-item *ngFor="let city of cities; let i = index">
+        <ion-label (click)="cityClick(city)">{{city}}:<ion-icon name="close" (click)="removeCity(city)" class="btn remove"></ion-icon> <span class="tempT">{{temperatureTEST[i]}}</span>
+          
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </span>
+ --> 
+  
+>>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
+
+  
 </ion-content>

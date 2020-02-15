@@ -1,7 +1,69 @@
+<<<<<<< HEAD
 ion-label::first-letter{
     text-transform: uppercase;
 }
 
 .tempT{
+=======
+@media screen and (min-width: 320px) {
+    #list{
+        position: relative;
+        top: 100px;
+    }
+
+    #pin{
+      float: left;
+      width: 20px;
+      height: 20px;
+      margin-top: 5px;
+    }
+  
+    #place{
+      font-size: 28px;
+    }
+  
+    #temp{
+      position: relative;
+      top: 100px;
+      font-size: 9vw;
+    }
+  
+    #des{
+      position: relative;
+      font-size: 4vw;
+      top: -20px;
+    }
+  
+    #forecastNextHour{
+      position: relative;
+      top: -20px;
+      font-size: 3vw;
+    }
+  
+    #info{
+      font-size: 16px;
+      position: relative;
+      top: 0px;
+    }
+  
+    .nextHours{
+      padding: 5px;
+    }
+  }
+
+ion-label::first-letter{
+    text-transform: uppercase;
+}
+
+.remove{
+    visibility: hidden;
+}
+
+.tempT{
+    float: right;
+}
+
+ion-icon{
+>>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
     float: right;
 }

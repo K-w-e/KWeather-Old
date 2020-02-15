@@ -25,11 +25,20 @@
     "@ionic-native/status-bar": "^5.0.0",
     "@ionic/angular": "^4.7.1",
     "@ionic/storage": "^2.2.0",
+<<<<<<< HEAD
+=======
+    "@types/jquery": "^3.3.31",
+>>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
     "chart.js": "^2.9.3",
     "cordova-android": "8.1.0",
     "cordova-plugin-geolocation": "^4.0.2",
     "cordova-sqlite-storage": "^4.0.0",
     "core-js": "^2.5.4",
+<<<<<<< HEAD
+=======
+    "jquery": "^3.4.1",
+    "leaflet": "^1.6.0",
+>>>>>>> 74aa774f61ad52cd76f068d977b4fdfe68d17873
     "ng2-charts": "^2.3.0",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",

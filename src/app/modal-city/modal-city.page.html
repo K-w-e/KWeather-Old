@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      <ion-icon name="close" (click)="closeModal()"></ion-icon>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-icon name="pin" id="pin"></ion-icon>
+    <div class="today" id="today">
+      <span id="place">{{place}}</span>
+      <br>
+      <span id="temp">{{temperature}}<br>
+        <span id="des">{{des}}</span><br>
+          <span id="source"><ion-icon name="information-circle" id="sourceIcon"></ion-icon>OpenWeatherMap</span>
+            <span id="forecastNextHour">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12">
+                    <ion-segment scrollable>
+                      <ion-segment *ngFor="let giorno of giorni">
+                        <div class="nextHours">
+                          <ion-label>{{giorno.getTimeString()}}</ion-label><br>
+                          <ion-label><img src={{giorno.getIcon()}}/></ion-label><br>
+                          <ion-label>{{giorno.getTemp()}}</ion-label><br>                          
+                        </div>
+                      </ion-segment>
+                    </ion-segment>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </span>
+            
+            <span id="info">
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
+                    Umidità: {{humidity}}%
+                  </ion-col>
+                  <ion-col>
+                    Pressione: {{pressure}} hPa
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    Vento: {{speed}} km/h
+                  </ion-col>
+                  <ion-col>
+                    Indice qualità aria: {{AirQuality}}
+                  </ion-col>
+                </ion-row>
+              </ion-grid>       
+            </span>
+        </span>
+      </div>
+
+      <ion-list id="nextWeek">
+        <ion-item *ngFor="let day of dayW; let i = index">
+          <ion-label>{{day}}: 
+            <span style="float: right;">{{temperatureW[i]}}</span>            
+          </ion-label>
+        </ion-item>
+      </ion-list>
+</ion-content>
