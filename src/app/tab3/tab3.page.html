@@ -8,16 +8,17 @@
 </ion-header>
 
 <ion-content class="content ion-padding">
-<ion-searchbar animated type="text" [(ngModel)]="city" placeholder="Inserisci città qui" debounce="500"></ion-searchbar>
-<br><br>
-<ion-button (click)="getAPI()" class="mainBtn">Cerca</ion-button>
-<ion-button (click)="Set()" class="mainBtn">Salva città</ion-button>
+  <div id="search">
+    <ion-searchbar animated clear-icon type="text" [(ngModel)]="city" placeholder="Inserisci città qui" debounce="500"></ion-searchbar>
+  </div>
+  <ion-button (click)="getAPI()" class="mainBtn">Cerca</ion-button>
+  <ion-button (click)="Set()" class="mainBtn">Salva città</ion-button>
 
 <br><br><br>
     <div class="today" id="today2">
       <ion-icon name="pin" id="pin"></ion-icon>
       <div>
-        <span id="place" *ngIf="atemperature$ | async as temp">{{city}}</span>
+        <span id="place" *ngIf="atemperature$ | async as temp">{{temp.name}}</span>
         <br>
         <span id="temp" *ngIf="atemperature$ | async as temp">{{temperatureToday}}<br></span>
           <span id="des">{{descriptionToday}}</span><br>

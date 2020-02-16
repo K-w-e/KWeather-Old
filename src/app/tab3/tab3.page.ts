@@ -7,7 +7,7 @@ import { TemperatureTime } from '../Model/TemperatureTime';
 import { TemperatureService } from '../temperature.service';
 import { Giorno } from '../Model/Giorno';
 import { Observable } from 'rxjs';
-import { TempTest } from '../Model/temp/TempTest';
+import { TempTest } from '../Model/temp/Temp';
 import { TempWeek } from '../Model/temp/TempWeek';
 import { AirVisual } from '../Model/pollution/AirVisual';
 import { utils } from '../utils';
@@ -47,24 +47,35 @@ export class Tab3Page{
   }
  
  getAPI(){
-   this.atemperature$ = this.temperatureModel.getTempS(this.city);
-   this.tempWeek$ = this.temperatureModel.getTemperatureWeekS(this.city);
-   this.airVisual$ = this.temperatureModel.GetAQIS(this.city);
-   this.getGiorni();
-   this.getTemperatureC();
-   this.getAirQuality();
+    this.atemperature$ = this.temperatureModel.getTempS(this.city);
+    this.tempWeek$ = this.temperatureModel.getTemperatureWeekS(this.city);
+    this.getGiorni();
+    this.getTemperatureC();
  }
 
  getTemperatureC(){
   this.atemperature$.subscribe(temp => (
-    this.setTemperatureC(temp)
+    this.controlTemp(temp)
   ));
+}
+
+controlTemp(temp:TempTest){
+  if(temp!=null){
+    this.setTemperatureC(temp)
+    this.getLatAndLonForAirQuality(temp);
+  }
 }
 
 setTemperatureC(temp : TempTest){
  this.temperatureToday = ((parseFloat(temp.main.temp.toString())-273.15).toFixed(2)).toString()+"°C";
  this.descriptionToday = temp.weather[0].description;
  this.SetGraphic(this.descriptionToday);
+}
+
+getLatAndLonForAirQuality(temp : TempTest){
+  console.log(temp.coord.lat+ " " +temp.coord.lon)
+  this.airVisual$ = this.temperatureModel.GetAQI(temp.coord.lat, temp.coord.lon);
+  this.getAirQuality();
 }
 
  getAirQuality(){
@@ -88,23 +99,12 @@ setTemperatureC(temp : TempTest){
        let temperatureT = ((parseFloat(t.list[x].main.temp)-273.15).toFixed(2)).toString()+"°C";
        let typeT = t.list[x].weather[0].main;
        let desT = t.list[x].weather[0].description;
-       let iconT = this.checkIcon(desT);
+       let iconT = utils.checkIcon(desT);
        let time = new Date(t.list[x].dt_txt);
        this.giorni[x] = (new Giorno(temperatureT, typeT, iconT, time));
      }
    }  
  }
-
- checkIcon(desT): string{
-  if(desT=="clear sky")
-    return "assets/img/sun.png";
-  else if(desT=="few clouds")
-    return "assets/img/cloud-sunMore.png";
-  else if(desT=="broken clouds" || desT=="scattered clouds" || desT=="overcast clouds")
-    return "assets/img/cloud.png";
-  else if(desT.includes("rain"))
-    return "assets/img/rain.png";
-}
 
  setAirQuality(av : AirVisual){
    this.airQuality = (av.data.current.pollution.aqius).toString();

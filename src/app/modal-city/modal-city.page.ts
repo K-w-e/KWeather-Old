@@ -6,7 +6,7 @@ import { TemperatureTime } from '../Model/TemperatureTime';
 import { TemperatureService } from '../temperature.service';
 import { Giorno } from '../Model/Giorno';
 import { Observable, of, from } from 'rxjs';
-import { TempTest } from '../Model/temp/TempTest';
+import { TempTest } from '../Model/temp/Temp';
 import { TempWeek } from '../Model/temp/TempWeek';
 import { AirVisual } from '../Model/pollution/AirVisual';
 import { utils } from '../utils';
@@ -84,23 +84,12 @@ setTemperatureC(temp : TempTest){
        let temperatureT = ((parseFloat(t.list[x].main.temp)-273.15).toFixed(2)).toString()+"°C";
        let typeT = t.list[x].weather[0].main;
        let desT = t.list[x].weather[0].description;
-       let iconT = this.checkIcon(desT);
+       let iconT = utils.checkIcon(desT);
        let time = new Date(t.list[x].dt_txt);
        this.giorni[x] = (new Giorno(temperatureT, typeT, iconT, time));
      }
    }  
  }
-
-  checkIcon(desT): string{
-    if(desT=="clear sky")
-      return "assets/img/sun.png";
-    else if(desT=="few clouds")
-      return "assets/img/cloud-sunMore.png";
-    else if(desT=="broken clouds" || desT=="scattered clouds" || desT=="overcast clouds")
-      return "assets/img/cloud.png";
-    else if(desT.includes("rain"))
-      return "assets/img/rain.png";
-  }
 
   SetGraphic(description){
     utils.SetGraphic(description, document.getElementById("today3"));

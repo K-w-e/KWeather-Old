@@ -18,6 +18,19 @@ export class utils{
             div.classList.add("mist");
       }
 
+    static  checkIcon(desT): string{
+      if(desT=="clear sky")
+        return "assets/img/sun.png";
+      else if(desT=="few clouds")
+        return "assets/img/cloud-sunMore.png";
+      else if(desT=="broken clouds" || desT=="scattered clouds" || desT=="overcast clouds")
+        return "assets/img/cloud.png";
+      else if(desT.includes("rain"))
+        return "assets/img/rain.png";
+      else if(desT.includes("snow"))
+        return "assets/img/snow.png";
+    }
+
     static UtilDate(date){
         let aNumber : number = Number(date);
         if(aNumber<10)
