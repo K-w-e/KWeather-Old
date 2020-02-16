@@ -12,7 +12,7 @@
 
   <ion-icon name="pin" id="pin"></ion-icon>
     <div class="today" id="today">
-      <span id="place" *ngIf="atemperature$ | async as temp; else loading">{{ temp.name }}</span>
+      <span id="place" *ngIf="atemperature$ | async as temp">{{ temp.name }}</span>
       <br>
       <span id="temp">{{ temperatureToday }}<br>
         <span id="des">{{ descriptionToday }}</span><br>
@@ -38,15 +38,15 @@
             <span id="info">
               <ion-grid>
                 <ion-row>
-                  <ion-col *ngIf="atemperature$ | async as temp; else loading">
+                  <ion-col *ngIf="atemperature$ | async as temp">
                     Umidità: {{temp.main.humidity}}%
                   </ion-col>
-                  <ion-col *ngIf="atemperature$ | async as temp; else loading">
+                  <ion-col *ngIf="atemperature$ | async as temp">
                     Pressione: {{temp.main.pressure}} hPa
                   </ion-col>
                 </ion-row>
                 <ion-row>
-                  <ion-col *ngIf="atemperature$ | async as temp; else loading">
+                  <ion-col *ngIf="atemperature$ | async as temp">
                     Vento: {{temp.wind.speed}} km/h
                   </ion-col>
                   <ion-col>
@@ -57,13 +57,5 @@
             </span>
         </span>
       </div>
-
-      <ion-list id="nextWeek">
-        <ion-item *ngFor="let day of dayW; let i = index">
-          <ion-label>{{day}}: 
-            <span style="float: right;">{{temperatureW[i]}}</span>            
-          </ion-label>
-        </ion-item>
-      </ion-list>
 </ion-content>
 </ion-app>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Storage, IonicStorageModule } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
 import { Platform, ModalController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -54,7 +54,7 @@ export class AppComponent {
   }
 
   change2(){
-    var menu = document.getElementById("test");
+    let menu = document.getElementById("test");
     menu.classList.toggle("darkMode");
     menu.classList.toggle("lightMode");
   }
@@ -62,7 +62,6 @@ export class AppComponent {
   
 
   Get(){
-    //this.clearList();
     this.storageService.forEach((value: any, key: string, iterationNumber: Number) => {
       this.cities[(iterationNumber.valueOf()-1).toString()] = value;
     }).then(
@@ -92,7 +91,6 @@ export class AppComponent {
     this.storageService.remove(city); 
     this.Get();
     this.indice--;
-    console.log(this.cities);
   }
 
   remove(){
