@@ -16,6 +16,8 @@ export class utils{
             div.classList.add("broken_clouds");
         else if(description=="mist")
             div.classList.add("mist");
+        else 
+            div.classList.add("any");
       }
 
     static  checkIcon(desT): string{
@@ -29,6 +31,8 @@ export class utils{
         return "assets/img/rain.png";
       else if(desT.includes("snow"))
         return "assets/img/snow.png";
+      else 
+        return "assets/img/any.png";
     }
 
     static UtilDate(date){
